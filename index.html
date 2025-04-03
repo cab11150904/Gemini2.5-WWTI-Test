@@ -3,8 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wanna Watch Something</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Wanna Watch Something (Dark)</title>
+    <style>
+        /* --- Dark Theme Variables --- */
+        :root {
+            --primary-color: #bb86fc; /* Purple accent */
+            --secondary-color: #03dac6; /* Teal accent */
+            --background-color: #121212; /* Very dark grey */
+            --surface-color: #1e1e1e; /* Slightly lighter grey for surfaces */
+            --card-background: #2a2a2a; /* Dark grey for cards */
+            --text-primary: #e0e0e0; /* Light grey for main text */
+            --text-secondary: #a0a0a0; /* Medium grey for less important text */
+            --error-color: #cf6679; /* Standard dark theme error color */
+            --border-color: #3a3a3a; /* Dark border color */
+            --input-background: #333333;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow */
+            --card-hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            --scrollbar-thumb: #444;
+            --scrollbar-track: var(--surface-color);
+        }
+
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--surface-color); /* Use surface color for header */
+            color: var(--text-primary);
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: var(--primary-color); /* Use accent for main title */
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--primary-color); /* Accent border */
+            padding-bottom: 5px;
+        }
+
+        h3 {
+             font-size: 1.2rem;
+             margin-bottom: 10px;
+             color: var(--text-primary);
+        }
+
+        button {
+            background-color: var(--primary-color); /* Primary accent button */
+            color: #000000; /* Black text on purple */
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #a76be4; /* Slightly lighter purple */
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* --- Search --- */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #content-search {
+            flex-grow: 1;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-background);
+            color: var(--text-primary);
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+         #content-search:focus {
+             border-color: var(--primary-color);
+             box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.3); /* Focus ring */
+         }
+
+
+        .search-button {
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* --- Results & Related Grids --- */
+        #search-results, #related-content, #recommendations-container {
+            margin-bottom: 30px;
+        }
+
+        .content-results, .related-results, .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+
+        /* --- Content Card --- */
+        .content-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid var(--border-color); /* Subtle border */
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+            border-color: var(--primary-color); /* Highlight border on hover */
+        }
+
+        .content-poster {
+            width: 100%;
+            height: 0;
+            padding-bottom: 150%;
+            object-fit: cover;
+            background-color: var(--surface-color); /* Darker placeholder bg */
+            display: block;
+            position: relative; /* Needed for placeholder */
+        }
+        .content-poster img { /* Style the actual image */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .placeholder-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: var(--surface-color);
+        }
+
+        .content-info {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .content-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 5px;
+            color: var(--text-primary);
+        }
+
+        .content-year {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .content-type {
+            display: inline-block;
+            padding: 3px 8px; /* Slightly more padding */
+            margin-left: 5px;
+            border-radius: 4px;
+            font-size: 0.75rem; /* Slightly smaller */
+            font-weight: bold; /* Bolder tags */
+            color: #000000; /* Black text on colored tags */
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-transform: uppercase; /* Uppercase tags */
+        }
+
+        /* Adjusted tag colors for dark theme contrast */
+        .type-movie { background-color: #e91e63; } /* Pink */
+        .type-tv { background-color: #00bcd4; } /* Cyan */
+
+        /* --- Details View --- */
+        .content-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+            background-color: var(--surface-color); /* Use surface for details background */
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .selected-content-poster {
+            width: 150px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            align-self: center;
+             border: 1px solid var(--border-color);
+        }
+
+        .selected-content-info {
+            flex: 1;
+        }
+
+        .selected-content-title {
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+         .selected-content-title .content-type { /* Style tag within title */
+             font-size: 0.8rem;
+         }
+
+        .selected-content-year {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .selected-content-overview {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        /* --- Watch Providers --- */
+        .watch-providers-container {
+            margin-top: 20px;
+            background-color: var(--card-background); /* Use card bg */
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2) inset; /* Darker inset shadow */
+            border: 1px solid var(--border-color);
+        }
+
+        .watch-providers-header {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             flex-wrap: wrap; /* Allow wrapping */
+             gap: 10px;
+             margin-bottom: 15px;
+        }
+
+        .watch-providers-title {
+            font-weight: bold;
+            font-size: 1.1rem; /* Slightly larger */
+            display: flex;
+            align-items: center;
+            color: var(--text-primary);
+        }
+
+        .watch-providers-title svg {
+            margin-right: 8px;
+            fill: var(--secondary-color); /* Teal accent icon */
+        }
+
+        .region-selector {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-background);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .watch-providers-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color); /* Separator */
+        }
+
+        .provider-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 65px; /* Slightly wider */
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s;
+        }
+
+        .provider-item:hover {
+            transform: scale(1.05);
+        }
+
+        .provider-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            background-color: #fff; /* Keep white bg for logos */
+        }
+
+        .provider-name {
+            font-size: 0.7rem;
+            text-align: center;
+            color: var(--text-secondary); /* Lighter secondary text */
+            word-break: break-word;
+            width: 100%;
+            line-height: 1.2;
+        }
+
+        .provider-type {
+            font-weight: bold;
+            margin: 15px 0 5px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase; /* Uppercase type */
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+
+        .justwatch-link {
+             margin-top: 15px;
+             font-size: 0.8rem;
+             text-align: right;
+        }
+
+        .justwatch-link a {
+             color: var(--secondary-color); /* Teal link */
+             text-decoration: none;
+             font-weight: bold;
+        }
+        .justwatch-link a:hover {
+             text-decoration: underline;
+        }
+
+
+        /* --- Cast --- */
+        .cast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); /* Slightly wider cards */
+            gap: 20px;
+        }
+
+        .cast-member {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+             border: 1px solid var(--border-color);
+        }
+
+        .cast-header-container {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color); /* Separate header */
+        }
+
+        .cast-photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: var(--surface-color); /* Dark placeholder */
+            flex-shrink: 0;
+             border: 2px solid var(--border-color); /* Border around photo */
+        }
+         .cast-photo.placeholder-image { /* Style placeholder specifically */
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             color: var(--text-secondary);
+             font-size: 1.5rem; /* Show an icon or initial? */
+         }
+
+
+        .cast-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .cast-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+        }
+
+        .character-name {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* --- Known For --- */
+        .known-for-container {
+            padding: 15px;
+            /* border-top: 1px solid var(--border-color); */ /* Removed top border */
+            background-color: var(--surface-color); /* Use surface color */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .known-for-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary); /* Secondary text for title */
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .known-for-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px 0 15px 0; /* Adjust padding */
+            flex-grow: 1;
+             /* Simple scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+        }
+        .known-for-list::-webkit-scrollbar { height: 8px; }
+        .known-for-list::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 4px; }
+        .known-for-list::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 4px; }
+
+
+        .known-for-item {
+            width: 120px;
+            flex-shrink: 0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            background-color: var(--card-background); /* Use card bg */
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        .known-for-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            border-color: var(--secondary-color); /* Teal highlight */
+        }
+
+
+        .known-for-poster {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: var(--surface-color);
+            display: block;
+             position: relative;
+        }
+         .known-for-poster img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+         }
+
+
+        .known-for-info {
+            padding: 8px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .known-for-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            white-space: normal;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .known-for-year {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .known-for-role {
+            font-size: 0.7rem;
+            color: var(--secondary-color); /* Teal for role */
+            font-style: italic;
+            white-space: normal;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.3;
+            margin-top: auto;
+        }
+
+
+        /* --- Loader & Error --- */
+        .loader {
+            text-align: center;
+            margin: 50px 0;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+
+        .loader-spinner {
+            border: 5px solid var(--surface-color); /* Lighter border */
+            border-top: 5px solid var(--secondary-color); /* Teal spinner */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: var(--text-primary); /* Light text on error bg */
+            background-color: rgba(207, 102, 121, 0.5); /* Semi-transparent error bg */
+            border: 1px solid var(--error-color);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* --- Attribution --- */
+        .attribution {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+         .attribution a {
+             color: var(--secondary-color); /* Teal links */
+             text-decoration: none;
+         }
+         .attribution a:hover {
+             text-decoration: underline;
+         }
+
+        /* --- Media Queries --- */
+        @media (min-width: 768px) {
+            /* Details View: Side-by-side */
+            .content-details {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            .selected-content-poster {
+                width: 200px; /* Larger poster */
+                align-self: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+            .selected-content-title { font-size: 1.5rem; }
+            .watch-providers-header { align-items: flex-start; }
+        }
+
+    </style>
 </head>
 <body>
     <header>
@@ -42,17 +663,17 @@
             <h2>Cast Members</h2>
             <div class="cast-grid" id="cast-grid">
                 </div>
-            <div id="recommendations-container">
-                 <h2>You Might Also Like</h2>
+            <div id="recommendations-container" style="display: none;"> <h2>You Might Also Like</h2>
                  <div class="recommendations-grid" id="recommendations-grid">
                     </div>
              </div>
         </div>
 
         <div class="attribution">
-            </div>
+             Data provided by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDb</a>. Watch provider data from JustWatch.
+        </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+    </body>
 </html>
