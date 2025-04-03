@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanna Watch Something</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Wanna Watch Something</h1>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="content-search" placeholder="Search for a movie or TV show...">
+                <button class="search-button" id="search-button">Search</button>
+            </div>
+        </div>
+
+        <div id="error-display" class="error-message" style="display: none;"></div>
+
+        <div id="search-results">
+            <h2>Search Results</h2>
+            <div class="content-results" id="content-results"></div>
+        </div>
+
+        <div id="related-content" style="display: none;">
+            <h2>You Might Also Like</h2>
+            <div class="related-results" id="related-results"></div>
+        </div>
+
+        <div class="loader" id="loader" style="display: none;">
+            <div class="loader-spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <div id="details-view-container" style="display: none;">
+            <div class="content-details" id="content-details">
+                </div>
+            <h2>Cast Members</h2>
+            <div class="cast-grid" id="cast-grid">
+                </div>
+            <div id="recommendations-container">
+                 <h2>You Might Also Like</h2>
+                 <div class="recommendations-grid" id="recommendations-grid">
+                    </div>
+             </div>
+        </div>
+
+        <div class="attribution">
+            </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
